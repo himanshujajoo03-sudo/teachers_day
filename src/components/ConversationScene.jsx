@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, MessageCircle, ArrowRight, User, Users } from 'lucide-react';
 import { playSound } from '../utils/audio';
+import { loadFacultyImageManifest, getFacultyPhoto } from '../utils/facultyImages';
 
 export const ConversationScene = ({ teacher, onComplete }) => {
   const isFemale =
@@ -102,6 +103,18 @@ export const ConversationScene = ({ teacher, onComplete }) => {
 
   const dialogues = isVariationA ? dialoguesA : dialoguesB;
 
+  // Local photo resolution via manifest
+  const [resolvedTeacherPhoto, setResolvedTeacherPhoto] = useState(teacher?.photo ?? null);
+
+  useEffect(() => {
+    if (!teacher?.facultyNumber) return;
+    loadFacultyImageManifest().then(() => {
+      const localPath = getFacultyPhoto(teacher.facultyNumber);
+      if (localPath) setResolvedTeacherPhoto(localPath);
+      else setResolvedTeacherPhoto(teacher?.photo ?? null);
+    });
+  }, [teacher]);
+
   // Track currently visible message index (1-based: shows dialogues up to visibleIndex)
   const [visibleIndex, setVisibleIndex] = useState(1);
   const [isCompleted, setIsCompleted] = useState(false);
@@ -176,9 +189,9 @@ export const ConversationScene = ({ teacher, onComplete }) => {
               {/* Teacher Avatar (Left) */}
               {isTeacher && (
                 <div className="w-7 h-7 rounded-full overflow-hidden border border-gold-400/40 bg-midnight-900 flex-shrink-0 flex items-center justify-center shadow-md">
-                  {teacher?.photo ? (
+                  {resolvedTeacherPhoto ? (
                     <img
-                      src={teacher.photo}
+                      src={resolvedTeacherPhoto}
                       alt={teacher.displayName}
                       className="w-full h-full object-cover"
                     />

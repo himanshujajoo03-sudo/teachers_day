@@ -192,6 +192,12 @@ export const teachers = [
   }
 ];
 
+// Automatically derive facultyNumber (1–22) from the slug for image lookup
+teachers.forEach((t, idx) => {
+  const match = t.slug.match(/faculty-?(\d+)/i);
+  t.facultyNumber = match ? parseInt(match[1], 10) : idx + 1;
+});
+
 export const getTeacherBySlug = (slug) => {
   return teachers.find(
     (t) => t.slug.toLowerCase() === (slug || '').toLowerCase()

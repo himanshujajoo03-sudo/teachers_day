@@ -132,6 +132,12 @@ export const HomePage = () => {
           <Heart className="w-3 h-3 text-rose-500 inline fill-rose-500" />
           <span>by the students</span>
         </p>
+        <p className="text-[10px] text-slate-600 mt-1">
+          Made by{' '}
+          <span className="text-slate-500">Utkarsha Mahulkar &amp; Himanshu Jajoo</span>
+          {' '}·{' '}
+          <span className="text-slate-600">3rd Year (A)</span>
+        </p>
       </footer>
     </div>
   );

@@ -1,10 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, ArrowRight, User } from 'lucide-react';
 import { playSound } from '../utils/audio';
+import { loadFacultyImageManifest, getFacultyPhoto } from '../utils/facultyImages';
 
 export const TeacherReveal = ({ teacher, onNext }) => {
   const [imgError, setImgError] = useState(false);
+  // resolvedPhoto: local path if available, else Unsplash fallback, else null
+  const [resolvedPhoto, setResolvedPhoto] = useState(teacher?.photo ?? null);
+
+  // Load the manifest and resolve the local photo path (if any)
+  useEffect(() => {
+    if (!teacher?.facultyNumber) return;
+    loadFacultyImageManifest().then(() => {
+      const localPath = getFacultyPhoto(teacher.facultyNumber);
+      if (localPath) {
+        setResolvedPhoto(localPath);
+      } else {
+        // Keep Unsplash fallback photo
+        setResolvedPhoto(teacher?.photo ?? null);
+      }
+    });
+  }, [teacher]);
 
   const handleContinue = () => {
     playSound('click');
@@ -45,12 +62,19 @@ export const TeacherReveal = ({ teacher, onNext }) => {
         <div className="absolute inset-0 bg-gold-400/20 blur-lg rounded-2xl pointer-events-none" />
 
         <div className="relative w-full h-full rounded-2xl overflow-hidden border-2 border-gold-500/40 shadow-xl bg-midnight-900 flex items-center justify-center">
-          {!imgError && teacher.photo ? (
+          {!imgError && resolvedPhoto ? (
             <img
-              src={teacher.photo}
+              src={resolvedPhoto}
               alt={teacher.displayName}
               loading="eager"
-              onError={() => setImgError(true)}
+              onError={() => {
+                // If local photo fails, try Unsplash fallback
+                if (resolvedPhoto !== teacher?.photo && teacher?.photo) {
+                  setResolvedPhoto(teacher.photo);
+                } else {
+                  setImgError(true);
+                }
+              }}
               className="w-full h-full object-cover"
             />
           ) : (
@@ -78,13 +102,13 @@ export const TeacherReveal = ({ teacher, onNext }) => {
         className="relative w-full px-5 py-4 rounded-2xl bg-slate-900/50 border border-slate-800/80 backdrop-blur-sm shadow-lg mb-5 text-left"
       >
         <span className="text-3xl text-gold-500/40 font-serif leading-none select-none block -mb-2">
-          “
+          "
         </span>
         <p className="font-sans text-sm sm:text-base text-ivory-100 font-light leading-relaxed italic px-1">
           {teacher.message}
         </p>
         <span className="text-3xl text-gold-500/40 font-serif leading-none select-none block text-right -mt-1">
-          ”
+          "
         </span>
         <p className="text-[11px] text-gold-300/90 font-sans tracking-wider uppercase text-right mt-2">
           — From your students 🤍
