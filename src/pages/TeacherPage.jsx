@@ -6,6 +6,7 @@ import { ParticleBackground } from '../components/ParticleBackground';
 import { AudioController } from '../components/AudioController';
 import { MysteryScene } from '../components/MysteryScene';
 import { SurpriseBox } from '../components/SurpriseBox';
+import { ConversationScene } from '../components/ConversationScene';
 import { EnvelopeReveal } from '../components/EnvelopeReveal';
 import { TeacherReveal } from '../components/TeacherReveal';
 import { FinalScene } from '../components/FinalScene';
@@ -137,11 +138,28 @@ export const TeacherPage = () => {
               transition={{ duration: 0.5 }}
               className="w-full"
             >
-              <SurpriseBox onBoxOpened={() => setScene('envelope')} />
+              <SurpriseBox onBoxOpened={() => setScene('conversation')} />
             </motion.div>
           )}
 
-          {/* Step 4: Locked Letter (Requires 6 taps) */}
+          {/* Step 4: Teacher & Students Conversation */}
+          {scene === 'conversation' && (
+            <motion.div
+              key="conversation"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -12 }}
+              transition={{ duration: 0.45 }}
+              className="w-full"
+            >
+              <ConversationScene
+                teacher={teacher}
+                onComplete={() => setScene('envelope')}
+              />
+            </motion.div>
+          )}
+
+          {/* Step 5: Letter automatically opens */}
           {scene === 'envelope' && (
             <motion.div
               key="envelope"
@@ -151,7 +169,7 @@ export const TeacherPage = () => {
               transition={{ duration: 0.5 }}
               className="w-full"
             >
-              <EnvelopeReveal onEnvelopeOpened={() => setScene('teacher')} />
+              <EnvelopeReveal teacher={teacher} onEnvelopeOpened={() => setScene('teacher')} />
             </motion.div>
           )}
 

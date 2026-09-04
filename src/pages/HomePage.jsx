@@ -18,8 +18,8 @@ export const HomePage = () => {
   };
 
   const filteredTeachers = teachers.filter((t) =>
-    t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    (t.department && t.department.toLowerCase().includes(searchTerm.toLowerCase()))
+    (t.displayName && t.displayName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+    (t.fullName && t.fullName.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -106,14 +106,9 @@ export const HomePage = () => {
                   </span>
                   <ArrowRight className="w-3.5 h-3.5 text-slate-500 group-hover:text-gold-300 transition-colors" />
                 </div>
-                <h3 className="font-serif text-base sm:text-lg text-ivory-100 font-normal group-hover:text-gold-200 transition-colors leading-snug mb-1">
-                  {teacher.name}
+                <h3 className="font-serif text-base sm:text-lg text-ivory-100 font-normal group-hover:text-gold-200 transition-colors leading-snug mb-3">
+                  {teacher.displayName}
                 </h3>
-                {teacher.department && (
-                  <p className="text-[11px] text-slate-400 font-sans line-clamp-1 mb-3">
-                    {teacher.department}
-                  </p>
-                )}
                 <div className="flex items-center gap-1.5 text-[11px] text-gold-300/90 font-sans tracking-wide pt-2 border-t border-slate-800/60">
                   <span>Open your surprise</span>
                   <span className="text-gold-400">→</span>

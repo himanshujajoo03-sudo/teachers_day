@@ -29,21 +29,10 @@ export const TeacherReveal = ({ teacher, onNext }) => {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.9, delay: 0.2 }}
-        className="font-serif text-2xl sm:text-3xl md:text-4xl text-ivory-50 font-normal tracking-wide mb-1 leading-tight"
+        className="font-serif text-2xl sm:text-3xl md:text-4xl text-ivory-50 font-normal tracking-wide mb-5 leading-tight"
       >
-        {teacher.name}
+        {teacher.displayName}
       </motion.h1>
-
-      {teacher.department && (
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.7, delay: 0.4 }}
-          className="text-[11px] sm:text-xs text-gold-400/80 font-sans tracking-widest uppercase mb-5"
-        >
-          {teacher.department}
-        </motion.p>
-      )}
 
       {/* 3. Teacher Photo - mobile centerpiece (max 260px on phone) */}
       <motion.div
@@ -59,7 +48,7 @@ export const TeacherReveal = ({ teacher, onNext }) => {
           {!imgError && teacher.photo ? (
             <img
               src={teacher.photo}
-              alt={teacher.name}
+              alt={teacher.displayName}
               loading="eager"
               onError={() => setImgError(true)}
               className="w-full h-full object-cover"
@@ -70,11 +59,10 @@ export const TeacherReveal = ({ teacher, onNext }) => {
                 <User className="w-6 h-6 text-gold-300" />
               </div>
               <span className="font-serif text-gold-200 text-base font-bold">
-                {teacher.name
+                {teacher.displayName
+                  .replace(/ Sir| Ma'am/g, '')
                   .split(' ')
-                  .map((n) => n[0])
                   .filter(Boolean)
-                  .slice(-2)
                   .join('')}
               </span>
             </div>

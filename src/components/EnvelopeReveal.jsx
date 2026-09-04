@@ -1,152 +1,86 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Lock, Unlock, Sparkles } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { Sparkles, Mail, ArrowRight } from 'lucide-react';
 import { playSound } from '../utils/audio';
 
-export const EnvelopeReveal = ({ onEnvelopeOpened }) => {
-  // Tap count: 0 -> 6
-  const [tapCount, setTapCount] = useState(0);
-  const [isWiggling, setIsWiggling] = useState(false);
+export const EnvelopeReveal = ({ teacher, onEnvelopeOpened }) => {
   const [isUnlocked, setIsUnlocked] = useState(false);
 
-  // Progressive feedback for each of the 6 taps
-  const tapFeedbacks = [
-    { text: "Hmm... this doesn't open that easily. Tap it.", hint: "Tap the letter" },
-    { text: "Nope. 😌", hint: "Tap again" },
-    { text: "Still locked.", hint: "Keep tapping" },
-    { text: "You're persistent.", hint: "Almost there" },
-    { text: "Almost...", hint: "Just a bit more" },
-    { text: "Okay... one more.", hint: "One last tap!" },
-    { text: "Unlocked. 🤍", hint: "Opening..." },
-  ];
-
-  const handleLetterTap = (e) => {
-    if (e) {
-      e.stopPropagation();
-      if (e.cancelable) e.preventDefault();
-    }
-    if (isUnlocked || isWiggling) return;
-
-    const nextCount = tapCount + 1;
-    setIsWiggling(true);
-
-    if (nextCount < 6) {
-      // Tap 1-5: progressive wiggle / unlock audio
-      if (nextCount <= 3) {
-        playSound('letter-tap');
-      } else {
-        playSound('letter-wiggle');
-      }
-      setTapCount(nextCount);
-
-      setTimeout(() => {
-        setIsWiggling(false);
-      }, 350);
-    } else {
-      // Tap 6: FINAL UNLOCK!
-      setTapCount(6);
+  // Automatic opening animation ~800ms after mounting
+  useEffect(() => {
+    const openTimer = setTimeout(() => {
       setIsUnlocked(true);
       playSound('unlock');
       setTimeout(() => {
         playSound('letter-open');
-      }, 400);
+      }, 350);
+    }, 700);
 
-      // Transition to Teacher Reveal
-      setTimeout(() => {
-        onEnvelopeOpened();
-      }, 2000);
-    }
+    // Auto-advance to the teacher reveal after displaying the opened letter
+    const proceedTimer = setTimeout(() => {
+      onEnvelopeOpened();
+    }, 2800);
+
+    return () => {
+      clearTimeout(openTimer);
+      clearTimeout(proceedTimer);
+    };
+  }, [onEnvelopeOpened]);
+
+  const handleManualOpen = () => {
+    playSound('letter-open');
+    onEnvelopeOpened();
   };
-
-  const currentFeedback = tapFeedbacks[tapCount] || tapFeedbacks[0];
 
   return (
     <div className="flex flex-col items-center justify-between w-full min-h-[calc(100dvh-110px)] px-4 max-w-sm sm:max-w-md mx-auto select-none safe-pb">
-      {/* 1. Header / Narrative clue */}
+      {/* 1. Header narrative */}
       <div className="w-full min-h-[70px] flex flex-col items-center justify-center text-center mt-2 z-20">
         <motion.div
-          key={currentFeedback.text}
           initial={{ opacity: 0, y: -6 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
+          transition={{ duration: 0.3 }}
         >
           <p className="text-slate-400 font-sans text-xs tracking-widest uppercase mb-1">
-            One last thing...
+            A special delivery
           </p>
           <h2 className="font-serif text-lg sm:text-xl text-ivory-100 font-normal leading-snug">
-            {currentFeedback.text}
+            {isUnlocked
+              ? `Opening letter for ${teacher?.displayName || 'you'}...`
+              : `A letter addressed to ${teacher?.displayName || 'you'}`}
           </h2>
         </motion.div>
       </div>
 
-      {/* 2. Elegant Progress Indicator: 6 Dots */}
-      <div className="flex items-center justify-center gap-2.5 my-2 z-20">
-        <span className="text-[10px] font-sans tracking-widest text-slate-400 uppercase mr-1">
-          Lock:
-        </span>
-        {[1, 2, 3, 4, 5, 6].map((step) => {
-          const isFilled = tapCount >= step;
-          return (
-            <motion.div
-              key={step}
-              animate={{
-                scale: isFilled ? [1, 1.35, 1] : 1,
-                backgroundColor: isFilled ? '#F59E0B' : 'rgba(51, 65, 85, 0.6)',
-                borderColor: isFilled ? '#FDE68A' : 'rgba(71, 85, 105, 0.4)',
-              }}
-              transition={{ duration: 0.3 }}
-              className="w-2.5 h-2.5 rounded-full border"
-            />
-          );
-        })}
-      </div>
-
-      {/* 3. The Locked Letter Container (Touch Target ≥ 280px) */}
+      {/* 2. The Letter Envelope Container */}
       <div className="relative w-full flex-1 flex items-center justify-center min-h-[260px] my-2">
         {/* Soft Golden Aura */}
         <motion.div
           animate={{
-            scale: tapCount >= 4 ? [1, 1.15, 1] : 1,
-            opacity: tapCount >= 4 ? 0.7 : 0.3,
+            scale: isUnlocked ? [1, 1.15, 1] : 1,
+            opacity: isUnlocked ? 0.75 : 0.35,
           }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute inset-0 bg-gold-400/20 blur-xl rounded-2xl pointer-events-none"
+          transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+          className="absolute inset-0 bg-gold-400/25 blur-2xl rounded-2xl pointer-events-none"
         />
 
         {/* Envelope Touch Card */}
         <motion.div
-          onClick={handleLetterTap}
-          onTouchStart={handleLetterTap}
+          onClick={handleManualOpen}
           role="button"
           tabIndex={0}
-          aria-label="Locked Letter - Tap 6 times to open"
+          aria-label="Opened Letter"
           animate={
             isUnlocked
               ? {
-                  scale: [1, 1.05, 1],
-                  y: -10,
+                  scale: [1, 1.04, 1],
+                  y: -8,
                 }
-              : isWiggling
-              ? tapCount <= 2
-                ? {
-                    x: [0, -6, 6, -3, 3, 0],
-                    y: [0, -4, 2, 0],
-                  }
-                : {
-                    x: [0, -12, 12, -8, 8, -4, 4, 0],
-                    rotate: [0, -4, 4, -2, 2, 0],
-                    y: [0, -6, 3, 0],
-                    scale: [1, 1.03, 0.98, 1],
-                  }
               : {
                   y: [0, -4, 0],
                 }
           }
-          transition={
-            isWiggling
-              ? { duration: 0.35, ease: 'easeInOut' }
-              : { duration: 3, repeat: Infinity, ease: 'easeInOut' }
-          }
+          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
           className="relative cursor-pointer touch-manipulation active:scale-95 my-2 w-full max-w-[280px] sm:max-w-[320px] aspect-[16/11] bg-gradient-to-b from-[#1E2538] to-[#121829] rounded-2xl border border-slate-700/80 shadow-2xl p-3 flex items-center justify-center overflow-hidden"
         >
           {/* Subtle paper highlight */}
@@ -163,7 +97,7 @@ export const EnvelopeReveal = ({ onEnvelopeOpened }) => {
             <path d="M0 0 L160 130 L0 220 Z" fill="#131C30" opacity="0.95" />
             <path d="M320 0 L160 130 L320 220 Z" fill="#131C30" opacity="0.95" />
 
-            {/* Top Flap unfolds on tap 6 */}
+            {/* Top Flap unfolds automatically */}
             <motion.path
               d="M0 0 L160 120 L320 0 Z"
               fill="#1A243D"
@@ -172,7 +106,7 @@ export const EnvelopeReveal = ({ onEnvelopeOpened }) => {
               animate={
                 isUnlocked
                   ? {
-                      d: "M0 0 L160 -95 L320 0 Z",
+                      d: 'M0 0 L160 -95 L320 0 Z',
                       opacity: [1, 0.4, 0],
                     }
                   : {}
@@ -181,7 +115,7 @@ export const EnvelopeReveal = ({ onEnvelopeOpened }) => {
             />
           </svg>
 
-          {/* Letter Card sliding upward when unlocked */}
+          {/* Letter Card sliding upward when opened */}
           <motion.div
             initial={{ y: 15, opacity: 0 }}
             animate={
@@ -193,42 +127,41 @@ export const EnvelopeReveal = ({ onEnvelopeOpened }) => {
             className="absolute inset-x-4 top-6 bottom-4 bg-[#FAF7F0] rounded-lg shadow-xl p-3 flex flex-col items-center justify-center z-10 pointer-events-none border border-gold-300"
           >
             <div className="w-10 h-1 bg-gold-400/40 rounded-full mb-2" />
-            <p className="text-slate-800 font-serif italic text-xs">For our Teacher</p>
+            <p className="text-slate-800 font-serif italic text-xs sm:text-sm text-center px-1 font-medium">
+              For {teacher?.displayName || 'our Teacher'}
+            </p>
+            <span className="text-[10px] text-amber-800 font-sans mt-1">✦ With deepest gratitude ✦</span>
           </motion.div>
 
-          {/* Central Wax Seal + Lock Icon */}
+          {/* Central Wax Seal */}
           <motion.div
             animate={
               isUnlocked
                 ? { scale: 0, opacity: 0 }
-                : {
-                    scale: tapCount >= 4 ? [1, 1.08, 1] : 1,
-                  }
+                : { scale: 1 }
             }
-            transition={{ duration: 0.3 }}
+            transition={{ duration: 0.35 }}
             className="relative z-10 flex flex-col items-center pointer-events-none"
           >
             <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-amber-600 via-gold-500 to-amber-400 border-2 border-gold-200/90 shadow-[0_0_16px_rgba(245,158,11,0.6)] flex items-center justify-center">
-              {tapCount >= 5 ? (
-                <Unlock className="w-6 h-6 text-ivory-100" />
-              ) : (
-                <Lock className="w-6 h-6 text-ivory-100" />
-              )}
+              <Mail className="w-6 h-6 text-ivory-100" />
             </div>
           </motion.div>
         </motion.div>
       </div>
 
-      {/* 4. Bottom Instruction / Hint Pill */}
+      {/* 3. Bottom Action / Progress Pill */}
       <div className="w-full pb-3 flex justify-center z-20">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-midnight-900/90 border border-gold-500/30 text-gold-300 text-xs font-sans tracking-wider uppercase shadow-md backdrop-blur-md">
-          <Sparkles className="w-3.5 h-3.5 text-gold-400" />
+        <button
+          onClick={handleManualOpen}
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-midnight-900/90 hover:bg-midnight-800 border border-gold-500/40 text-gold-300 text-xs font-sans tracking-wider uppercase shadow-lg backdrop-blur-md active:scale-95 transition-transform"
+        >
+          <Sparkles className="w-3.5 h-3.5 text-gold-400 animate-spin-slow" />
           <span>
-            {isUnlocked
-              ? 'Opening letter 🤍'
-              : `${currentFeedback.hint} (${tapCount}/6)`}
+            {isUnlocked ? 'Reading your letter 🤍' : 'Unsealing your letter...'}
           </span>
-        </div>
+          <ArrowRight className="w-3.5 h-3.5 text-gold-400" />
+        </button>
       </div>
     </div>
   );
