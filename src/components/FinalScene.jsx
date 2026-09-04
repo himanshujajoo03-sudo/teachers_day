@@ -70,11 +70,11 @@ export const FinalScene = ({ onReplay }) => {
           </div>
 
           <h3 className="font-serif text-lg sm:text-xl text-ivory-50 font-normal mb-1">
-            There’s more waiting for you…
+            There's more waiting for you…
           </h3>
 
           <p className="font-sans text-xs text-slate-300 leading-relaxed max-w-[280px] mb-3">
-            Please join us for our special Teacher’s Day celebratory gathering &amp; event. We would be honored by your presence!
+            Please join us for our special Teacher's Day celebratory gathering &amp; event. We would be honored by your presence!
           </p>
 
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-midnight-950/70 border border-gold-500/30 text-gold-300 text-xs">
@@ -133,6 +133,60 @@ export const FinalScene = ({ onReplay }) => {
           <ArrowLeft className="w-3.5 h-3.5" />
           <span>All Faculty Members</span>
         </Link>
+      </motion.div>
+
+      {/* ✦ Creator Credit — Premium Card ✦ */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.9, delay: 1.8 }}
+        className="mt-8 w-full relative"
+      >
+        {/* Hairline divider with centre spark */}
+        <div className="flex items-center gap-3 mb-5">
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
+          <Sparkles className="w-3.5 h-3.5 text-gold-500/60 flex-shrink-0" />
+          <div className="flex-1 h-px bg-gradient-to-r from-transparent via-slate-700 to-transparent" />
+        </div>
+
+        {/* Credit card */}
+        <div className="relative rounded-2xl overflow-hidden">
+          {/* Background glow */}
+          <div className="absolute inset-0 bg-gradient-to-b from-gold-500/8 via-transparent to-transparent pointer-events-none rounded-2xl" />
+          <div className="absolute -top-6 left-1/2 -translate-x-1/2 w-48 h-16 bg-gold-400/10 blur-2xl rounded-full pointer-events-none" />
+
+          <div className="relative z-10 px-4 py-5 flex flex-col items-center gap-1.5">
+            {/* Label */}
+            <p className="text-[11px] font-sans tracking-[0.2em] uppercase text-slate-400 flex items-center gap-1.5">
+              <Heart className="w-3 h-3 text-rose-400/80 fill-rose-400/80" />
+              Made with{' '}
+              <span className="text-rose-400/90">🤍</span>
+              {' '}by
+            </p>
+
+            {/* Names — the main visual focus */}
+            <motion.p
+              initial={{ opacity: 0, letterSpacing: '0.02em' }}
+              animate={{ opacity: 1, letterSpacing: '0.04em' }}
+              transition={{ duration: 1.2, delay: 2.1 }}
+              className="font-serif text-xl sm:text-2xl font-normal leading-snug"
+              style={{
+                background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 35%, #f59e0b 60%, #fde68a 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                filter: 'drop-shadow(0 0 12px rgba(245, 158, 11, 0.35))',
+              }}
+            >
+              Utkarsha Mahulkar &amp; Himanshu Jajoo
+            </motion.p>
+
+            {/* Year */}
+            <p className="text-[12px] sm:text-sm font-sans text-slate-400 tracking-widest mt-0.5">
+              3rd Year (A)
+            </p>
+          </div>
+        </div>
       </motion.div>
     </div>
   );

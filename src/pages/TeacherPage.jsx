@@ -207,14 +207,22 @@ export const TeacherPage = () => {
       </main>
 
       {/* Minimal Mobile-Safe Footer */}
-      <footer className="relative z-10 py-2 text-center font-sans tracking-wider">
-        <p className="text-[10px] text-slate-500">With reverence &amp; gratitude to all mentors ✦</p>
-        <p className="text-[10px] text-slate-600 mt-0.5">
-          Made by{' '}
-          <span className="text-slate-500">Utkarsha Mahulkar &amp; Himanshu Jajoo</span>
-          {' '}·{' '}
-          <span className="text-slate-600">3rd Year (A)</span>
+      <footer className="relative z-10 py-4 text-center font-sans">
+        <p className="text-[10px] text-slate-600 tracking-wider mb-1">With reverence &amp; gratitude to all mentors ✦</p>
+        <p className="text-[11px] text-slate-500 tracking-widest uppercase mb-1">Made with 🤍 by</p>
+        <p
+          className="text-base sm:text-lg font-serif font-normal"
+          style={{
+            background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 40%, #f59e0b 65%, #fde68a 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            filter: 'drop-shadow(0 0 8px rgba(245, 158, 11, 0.25))',
+          }}
+        >
+          Utkarsha Mahulkar &amp; Himanshu Jajoo
         </p>
+        <p className="text-[11px] text-slate-500 tracking-wider mt-0.5">3rd Year (A)</p>
       </footer>
     </div>
   );

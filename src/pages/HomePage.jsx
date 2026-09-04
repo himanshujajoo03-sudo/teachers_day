@@ -126,18 +126,26 @@ export const HomePage = () => {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 py-4 text-center text-[10px] text-slate-500 font-sans tracking-wider border-t border-slate-900/80 safe-pb">
-        <p className="flex items-center justify-center gap-1.5">
+      <footer className="relative z-10 py-5 text-center font-sans border-t border-slate-900/80 safe-pb">
+        <p className="flex items-center justify-center gap-1.5 text-[11px] text-slate-500 tracking-wider mb-2">
           <span>Crafted with</span>
           <Heart className="w-3 h-3 text-rose-500 inline fill-rose-500" />
           <span>by the students</span>
         </p>
-        <p className="text-[10px] text-slate-600 mt-1">
-          Made by{' '}
-          <span className="text-slate-500">Utkarsha Mahulkar &amp; Himanshu Jajoo</span>
-          {' '}·{' '}
-          <span className="text-slate-600">3rd Year (A)</span>
+        <p className="text-[11px] text-slate-500 tracking-widest uppercase mb-1">Made with 🤍 by</p>
+        <p
+          className="text-base sm:text-lg font-serif font-normal"
+          style={{
+            background: 'linear-gradient(135deg, #fef3c7 0%, #fbbf24 40%, #f59e0b 65%, #fde68a 100%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            backgroundClip: 'text',
+            filter: 'drop-shadow(0 0 8px rgba(245, 158, 11, 0.25))',
+          }}
+        >
+          Utkarsha Mahulkar &amp; Himanshu Jajoo
         </p>
+        <p className="text-[11px] text-slate-500 tracking-wider mt-0.5">3rd Year (A)</p>
       </footer>
     </div>
   );
